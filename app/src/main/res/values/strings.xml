@@ -3,4 +3,15 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_main">GeoAlarm</string>
+    <string name="title_activity_settings">SettingsActivity</string>
+
+    <string name="MapSettings">Map Settings</string>
+    <string name="AlarmSettings">Alarm Settings</string>
+    <string name="SatelliteView">Satellite View</string>
+    <string name="TrafficView">Traffic View</string>
+    <string name="AlarmRange">Show Alarm Range</string>
+    <string name="NotificationBar">Notification Bar</string>
+    <string name="VibrateAlarm">Alarm Vibration</string>
+    <string name="title_activity_settings_fragment">SettingsFragment</string>
 </resources>

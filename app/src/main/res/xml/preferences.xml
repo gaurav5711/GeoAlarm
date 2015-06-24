@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+  <PreferenceCategory
+      android:key="pref_key_map_settings"
+      android:title="@string/MapSettings">
+    <CheckBoxPreference
+        android:key="pref_key_satellite_view"
+        android:title="@string/SatelliteView"
+        android:defaultValue="true"/>
+    <CheckBoxPreference
+        android:key="pref_key_traffic_view"
+        android:title="@string/TrafficView"
+        android:defaultValue="false"/>
+  </PreferenceCategory>
+
+  <PreferenceCategory
+      android:key="pref_key_alarm_settings"
+      android:title="@string/AlarmSettings">
+    <CheckBoxPreference
+        android:key="pref_key_show_alarm_range"
+        android:title="@string/AlarmRange"
+        android:defaultValue="true"/>
+    <CheckBoxPreference
+        android:key="pref_key_notification_bar"
+        android:title="@string/NotificationBar"
+        android:defaultValue="true"/>
+    <CheckBoxPreference
+        android:key="pref_key_alarm_vibration"
+        android:title="@string/VibrateAlarm"
+        android:defaultValue="true"/>
+  </PreferenceCategory>
+
+</PreferenceScreen>
