@@ -14,4 +14,5 @@
     <string name="NotificationBar">Notification Bar</string>
     <string name="VibrateAlarm">Alarm Vibration</string>
     <string name="title_activity_settings_fragment">SettingsFragment</string>
+    <string name="title_activity_alarm_detail">Alarm</string>
 </resources>
