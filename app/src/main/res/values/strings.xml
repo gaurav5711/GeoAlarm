@@ -15,4 +15,6 @@
     <string name="VibrateAlarm">Alarm Vibration</string>
     <string name="title_activity_settings_fragment">SettingsFragment</string>
     <string name="title_activity_alarm_detail">Alarm</string>
+
+    <string name="NewAlarm">New Alarm</string>
 </resources>

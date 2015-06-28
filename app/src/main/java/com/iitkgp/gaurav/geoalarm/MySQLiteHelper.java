@@ -78,7 +78,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper
             do
             {
                 mMyAlarm = new MyAlarm();
-                mMyAlarm.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(ID))));
+                //mMyAlarm.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(ID))));
                 mMyAlarm.setTitle(cursor.getString(cursor.getColumnIndex(TITLE)));
                 mMyAlarm.setTexts(cursor.getString(cursor.getColumnIndex(TEXTS)));
                 mMyAlarm.setRange(cursor.getString(cursor.getColumnIndex(RANGE)));

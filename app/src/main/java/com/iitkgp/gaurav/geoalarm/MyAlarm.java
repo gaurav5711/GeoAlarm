@@ -4,7 +4,7 @@ package com.iitkgp.gaurav.geoalarm;
  * Created by gaurav on 6/26/2015.
  */
 public class MyAlarm {
-    int id;
+  //  int id;
     String title;
     String texts;
     String range;
@@ -12,20 +12,20 @@ public class MyAlarm {
 
     public MyAlarm(){}
 
-    public MyAlarm(int mId,String mTitle,String mTexts,String mRange,String mRepeat){
-        id = mId;
+    public MyAlarm(String mTitle,String mTexts,String mRange,String mRepeat){
+ //       id = mId;
         title= mTitle;
         texts= mTexts;
         range = mRange;
         repeat = mRepeat;
     }
 
-    public void setId(int mId){
-        id = mId;
-    }
-    public int getId(){
-        return  id;
-    }
+ //   public void setId(int mId){
+ //       id = mId;
+ //   }
+ //   public int getId(){
+ //       return  id;
+ //   }
 
     public void setTitle(String mTitle){
         title = mTitle;

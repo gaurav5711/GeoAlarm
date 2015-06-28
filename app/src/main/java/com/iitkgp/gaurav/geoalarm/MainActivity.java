@@ -21,6 +21,7 @@ public class MainActivity extends ActionBarActivity {             //ActionBarAct
     String data[] = {"Gaurav","Kumar","19"};
     String dist[]={"500","600","100"};
     private ArrayList<ListViewItem> dataList;
+    MySQLiteHelper mySQL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +30,9 @@ public class MainActivity extends ActionBarActivity {             //ActionBarAct
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         dataList = new ArrayList<ListViewItem>();
         populate(dataList);
+        mySQL = new MySQLiteHelper(this);
+        MyAlarm mMyAlarm = new MyAlarm("Office","Dont wake me up","500","MoTu");
+        mySQL.addAlarm(mMyAlarm);
         // use this setting to improve performance if you know that changes
         // in content do not change the layout size of the RecyclerView
        // mRecyclerView.setHasFixedSize(true);
@@ -68,6 +72,11 @@ public class MainActivity extends ActionBarActivity {             //ActionBarAct
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Intent intent = new Intent(MainActivity.this,SettingsActivity.class);       //Settings Activity
+            startActivity(intent);
+            return true;
+        }
+        else if (id==R.id.action_new_alarm){
+            Intent intent = new Intent(MainActivity.this,AlarmDetail.class);
             startActivity(intent);
             return true;
         }
