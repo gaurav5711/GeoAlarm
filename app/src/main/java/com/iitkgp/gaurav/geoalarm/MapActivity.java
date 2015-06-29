@@ -2,6 +2,7 @@ package com.iitkgp.gaurav.geoalarm;
 
 import android.app.Activity;
 //import android.support.v7.app.ActionBarActivity;
+import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
 import android.util.Log;
@@ -56,6 +57,12 @@ public class MapActivity extends Activity {
                 oldMarker.remove();
                 Marker mMarker=googleMap.addMarker(new MarkerOptions().position(new LatLng(latLng.latitude, latLng.longitude)));
                 oldMarker=mMarker;
+                Bundle bundle = new Bundle();
+                bundle.putDouble("latitude",latLng.latitude);
+                bundle.putDouble("longitude",latLng.longitude);
+                Intent intent = new Intent (MapActivity.this,AlarmDetail.class);
+                intent.putExtras(bundle);
+                startActivity(intent);
             }
         });
         addMarker();

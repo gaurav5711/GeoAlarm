@@ -1,6 +1,7 @@
 package com.iitkgp.gaurav.geoalarm;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -15,12 +16,18 @@ public class AlarmDetail extends Activity {
 
     private String repeat="";
     private EditText edtTitle,edtTexts,edtRange;
+    private String mlatitude,mlongitude;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setContentView(R.layout.activity_alarm_detail);
         initialize();
+        Intent intent = getIntent();
+        Bundle bundle =intent.getExtras();
+        mlatitude=String.valueOf(bundle.getDouble("latitude"));
+        mlongitude=String.valueOf(bundle.getDouble("longitude"));
     }
 
     private void initialize() {
@@ -35,42 +42,48 @@ public class AlarmDetail extends Activity {
             case R.id.btnMon:
                 Button btn = (Button)findViewById(id);
                 btn.setAlpha(1);
-                repeat = repeat+"Mon";
+                if(!repeat.contains("Mon")) repeat = repeat + "Mon";
                 break;
             case R.id.btnTue:
                 btn = (Button)findViewById(id);
                 btn.setAlpha(1);
-                repeat = repeat+"Tue";
+                if(!repeat.contains("Tue")) repeat = repeat + "Tue";
+
                 break;
             case R.id.btnWed:
                 btn = (Button)findViewById(id);
                 btn.setAlpha(1);
-                repeat = repeat+"Wed";
+                if(!repeat.contains("Wed")) repeat = repeat + "Wed";
                 break;
             case R.id.btnThu:
                 btn = (Button)findViewById(id);
                 btn.setAlpha(1);
-                repeat = repeat+"Thu";
+                if(!repeat.contains("Thu")) repeat = repeat + "Thu";
                 break;
             case R.id.btnFri:
                 btn = (Button)findViewById(id);
                 btn.setAlpha(1);
-                repeat = repeat+"Fri";
+                if(!repeat.contains("Fri")) repeat = repeat + "Fri";
+
                 break;
             case R.id.btnSat:
                 btn = (Button)findViewById(id);
                 btn.setAlpha(1);
-                repeat = repeat+"Sat";
+                if(!repeat.contains("Sat")) repeat = repeat+"Sat";
                 break;
             case R.id.btnSun:
                 btn = (Button)findViewById(id);
                 btn.setAlpha(1);
-                repeat = repeat+"Sun";
+                if(!repeat.contains("Sun")) repeat = repeat+"Sun";
                 break;
             case R.id.btnOK:
                 MySQLiteHelper mySQL = new MySQLiteHelper(this);
-                MyAlarm mMyAlarm = new MyAlarm(edtTitle.getText().toString(),edtTexts.getText().toString(),
-                                               edtRange.getText().toString(),repeat);                 //add data to database.....
+                MyAlarm mMyAlarm = new MyAlarm(edtTitle.getText().toString(),edtTexts.getText().toString(),mlatitude,
+                                               mlongitude,edtRange.getText().toString(),repeat);                 //add data to database.....
+                mySQL.addAlarm(mMyAlarm);
+                Intent intent = new Intent(AlarmDetail.this,AlarmServices.class);
+                stopService(intent);                          //used to update sql value to update alarm
+                startService(intent);
                 break;
         }
     }

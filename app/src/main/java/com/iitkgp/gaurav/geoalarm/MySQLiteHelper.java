@@ -24,7 +24,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper
     }
     public void onCreate(SQLiteDatabase db)
     {
-        String CREATE_ALARM_TABLE = "CREATE TABLE alarm ( "+"id INTEGER PRIMARY KEY AUTOINCREMENT, "+"title TEXT, "+"texts TEXT,"+"range TEXT,"+"repeat TEXT )";
+        String CREATE_ALARM_TABLE = "CREATE TABLE alarm ( "+"id INTEGER PRIMARY KEY AUTOINCREMENT, "+"title TEXT, "+"texts TEXT,"+"range TEXT,"+"latitude TEXT, "+"longitude TEXT"+"repeat TEXT )";
         db.execSQL(CREATE_ALARM_TABLE);                                        //repeat--stores first two letter of selected days else 0
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
@@ -38,8 +38,10 @@ public class MySQLiteHelper extends SQLiteOpenHelper
     private static final String TEXTS = "texts";
     private static final String RANGE = "range";
     private static final String REPEAT = "repeat";
+    private static final String LATITUDE="latitude";
+    private static final String LONGITUDE="longitude";
 
-    private static final String[] COLUMNS = {ID,TITLE,TEXTS,RANGE,REPEAT};
+    private static final String[] COLUMNS = {ID,TITLE,TEXTS,RANGE,LATITUDE,LONGITUDE,REPEAT};
     public void addAlarm(MyAlarm mMyAlarm)
     {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -47,6 +49,8 @@ public class MySQLiteHelper extends SQLiteOpenHelper
         values.put(TITLE, mMyAlarm.getTitle());
         values.put(TEXTS, mMyAlarm.getTexts());
         values.put(RANGE, mMyAlarm.getRange());
+        values.put(LATITUDE,mMyAlarm.getLatitude());
+        values.put(LONGITUDE,mMyAlarm.getLongitude());
         values.put(REPEAT, mMyAlarm.getRepeat());
         db.insertOrThrow(TABLE_ALARM, null, values);
         db.close();
@@ -83,10 +87,50 @@ public class MySQLiteHelper extends SQLiteOpenHelper
                 mMyAlarm.setTexts(cursor.getString(cursor.getColumnIndex(TEXTS)));
                 mMyAlarm.setRange(cursor.getString(cursor.getColumnIndex(RANGE)));
                 mMyAlarm.setRepeat(cursor.getString(cursor.getColumnIndex(REPEAT)));
+                mMyAlarm.setLatitude(cursor.getString(cursor.getColumnIndex(LATITUDE)));
+                mMyAlarm.setLongitude(cursor.getString(cursor.getColumnIndex(LONGITUDE)));
                 listAlarm.add(mMyAlarm);
             }while (cursor.moveToNext());
         }
         return listAlarm;
+    }
+
+    public int getCount(){
+        String query = "SELECT * FROM " + TABLE_ALARM;
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+        int count=0;
+        if (cursor.moveToFirst())
+        {
+            do
+            {
+                count++;
+            }while (cursor.moveToNext());
+        }
+        return count;
+    }
+
+    public MyAlarm getItemAtId(int id){
+        String query = "SELECT * FROM " + TABLE_ALARM;
+        SQLiteDatabase db = this.getWritableDatabase();
+        MyAlarm alarm = new MyAlarm();
+        Cursor cursor = db.rawQuery(query, null);
+        int count=0;
+        if (cursor.moveToFirst())
+        {
+            do {
+                if (id == count) {
+                    alarm.setTitle(cursor.getString(cursor.getColumnIndex(TITLE)));
+                    alarm.setTexts(cursor.getString(cursor.getColumnIndex(TEXTS)));
+                    alarm.setRange(cursor.getString(cursor.getColumnIndex(RANGE)));
+                    alarm.setRepeat(cursor.getString(cursor.getColumnIndex(REPEAT)));
+                    alarm.setLatitude(cursor.getString(cursor.getColumnIndex(LATITUDE)));
+                    alarm.setLongitude(cursor.getString(cursor.getColumnIndex(LONGITUDE)));
+                }
+                count++;
+            }while (cursor.moveToNext());
+        }
+        return alarm;
     }
 
 }

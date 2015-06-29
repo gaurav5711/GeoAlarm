@@ -45,6 +45,7 @@
             android:name=".AlarmDetail"
             android:label="@string/title_activity_alarm_detail" >
         </activity>
+        <service android:name=".AlarmServices"></service>
     </application>
 
 </manifest>
