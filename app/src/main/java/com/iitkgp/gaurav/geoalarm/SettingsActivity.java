@@ -1,14 +1,29 @@
 package com.iitkgp.gaurav.geoalarm;
 
 import android.app.Activity;
+import android.content.SharedPreferences;
 import android.preference.PreferenceActivity;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
-public class SettingsActivity extends Activity {
+public class SettingsActivity extends AppCompatActivity {
+
+    private String TAG = this.getClass().getSimpleName();
+    private static final String KEY_SATELLITE_VIEW="pref_key_satellite_view";
+    private static final String KEY_TRAFFIC_VIEW="pref_key_traffic_view";
+    private static final String KEY_ALARMRANGE_VIEW="pref_key_show_alarm_range";
+    private static final String KEY_NOTIFICATION_VIEW="pref_key_notification_bar";
+    private static final String KEY_VIBRATOR_VIEW="pref_key_alarm_vibration";
+
+    SharedPreferences sharedPref;
+    SharedPreferences.OnSharedPreferenceChangeListener listener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,6 +31,29 @@ public class SettingsActivity extends Activity {
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, new SettingsFragment())
                 .commit();
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        listener =
+                new SharedPreferences.OnSharedPreferenceChangeListener() {
+                    public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+                        Log.d(TAG,"Setting Changed");
+                        if(key.equals(KEY_SATELLITE_VIEW)){
+                        MainActivity.SATELLITEVIEW=(!MainActivity.SATELLITEVIEW);
+                        }
+                        else if(key.equals(KEY_TRAFFIC_VIEW)){
+                            MainActivity.TRAFFICVIEW=(!MainActivity.TRAFFICVIEW);
+                        }
+                        else if(key.equals(KEY_ALARMRANGE_VIEW)){
+                            MainActivity.SHOWALARMRANGE=(!MainActivity.SHOWALARMRANGE);
+                        }
+                        else if(key.equals(KEY_NOTIFICATION_VIEW)){
+                            MainActivity.NOTIFICATIONBAR=(!MainActivity.NOTIFICATIONBAR);
+                        }
+                        else if(key.equals(KEY_VIBRATOR_VIEW)){
+                            MainActivity.ALARMVIBRATOR=(!MainActivity.ALARMVIBRATOR);
+                        }
+                    }
+                };
+        sharedPref.registerOnSharedPreferenceChangeListener(listener);
     }
 
     @Override
@@ -26,17 +64,14 @@ public class SettingsActivity extends Activity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+    protected void onResume() {
+        super.onResume();
+        sharedPref.registerOnSharedPreferenceChangeListener(listener);
+    }
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        sharedPref.unregisterOnSharedPreferenceChangeListener(listener);
     }
 }

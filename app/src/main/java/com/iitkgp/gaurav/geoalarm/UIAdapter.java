@@ -16,12 +16,13 @@ import java.util.ArrayList;
  */
 public class UIAdapter extends RecyclerView.Adapter<UIAdapter.MyViewHolder> {
 
+    private String TAG = this.getClass().getSimpleName();
     private ArrayList<ListViewItem> mDataset;
     private LayoutInflater mInflator;
 
     public UIAdapter(Context context,ArrayList<ListViewItem> data){
         mDataset = data;
-//        Log.d("data::"," "+mDataset[0]+" "+mDataset[1]+" "+mDataset[2]);
+//        Log.d(TAG," "+mDataset[0]+" "+mDataset[1]+" "+mDataset[2]);
         mInflator = LayoutInflater.from(context);
     }
 
@@ -43,7 +44,7 @@ public class UIAdapter extends RecyclerView.Adapter<UIAdapter.MyViewHolder> {
     @Override
     public UIAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // create a new view
-        Log.e("UIAdapter","createViewHolderCalled");
+        Log.d(TAG,"createViewHolderCalled");
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.listview, parent, false);
         // set the view's size, margins, paddings and layout parameters
@@ -53,7 +54,7 @@ public class UIAdapter extends RecyclerView.Adapter<UIAdapter.MyViewHolder> {
 
     @Override
     public void onBindViewHolder(UIAdapter.MyViewHolder holder, int position) {
-        Log.e("UIAdapter","bindViewHolderCalled");
+        Log.d(TAG,"bindViewHolderCalled");
      holder.txtTitle.setText(mDataset.get(position).alarmTitle);
      holder.txtDistance.setText(mDataset.get(position).distance);
      holder.mImageButton.setImageResource(mDataset.get(position).iconId);

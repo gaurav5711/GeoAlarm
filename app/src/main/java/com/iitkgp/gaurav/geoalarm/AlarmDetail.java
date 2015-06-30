@@ -1,9 +1,11 @@
 package com.iitkgp.gaurav.geoalarm;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -12,11 +14,22 @@ import android.widget.Button;
 import android.widget.EditText;
 
 
-public class AlarmDetail extends Activity {
+public class AlarmDetail extends AppCompatActivity {
 
+    private String TAG = this.getClass().getSimpleName();
     private String repeat="";
     private EditText edtTitle,edtTexts,edtRange;
     private String mlatitude,mlongitude;
+    private AlarmListener mAlarmListener;
+
+    public AlarmDetail(Context context,AlarmListener listeners){
+        super();
+        mAlarmListener=listeners;
+    }
+
+   public AlarmDetail(){
+   super();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,10 +94,15 @@ public class AlarmDetail extends Activity {
                 MyAlarm mMyAlarm = new MyAlarm(edtTitle.getText().toString(),edtTexts.getText().toString(),mlatitude,
                                                mlongitude,edtRange.getText().toString(),repeat);                 //add data to database.....
                 mySQL.addAlarm(mMyAlarm);
+                MainActivity.dataList.add(new ListViewItem(edtTitle.getText().toString(), edtRange.getText().toString(), R.drawable.ic_alarm_btn_on));
                 Intent intent = new Intent(AlarmDetail.this,AlarmServices.class);
                 stopService(intent);                          //used to update sql value to update alarm
                 startService(intent);
-                break;
+                if(mAlarmListener!=null) {
+                    mAlarmListener.onAlarmCreated(new ListViewItem(edtTitle.getText().toString(), edtRange.getText().toString(), R.drawable.ic_alarm_btn_on));
+                }
+                startActivity(new Intent(AlarmDetail.this,MainActivity.class));
+                    break;
         }
     }
 

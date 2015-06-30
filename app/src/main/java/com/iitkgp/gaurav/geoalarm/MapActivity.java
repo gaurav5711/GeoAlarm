@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -21,7 +22,9 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.GoogleMap;
 
 
-public class MapActivity extends Activity {
+public class MapActivity extends AppCompatActivity {
+
+    private String TAG = this.getClass().getSimpleName();
 
     GoogleMap googleMap;
     Marker oldMarker;
@@ -35,7 +38,7 @@ public class MapActivity extends Activity {
         touchView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                Log.e("MapActivity","::"+event.getX()+",,"+event.getY());
+                Log.d(TAG,"::"+event.getX()+",,"+event.getY());
                 return false;
             }
         });
@@ -65,7 +68,7 @@ public class MapActivity extends Activity {
                 startActivity(intent);
             }
         });
-        addMarker();
+//        addMarker();
     }
 
 
@@ -89,7 +92,7 @@ public class MapActivity extends Activity {
                 }
             }
         } catch (NullPointerException exception){
-            Log.e("mapApp", exception.toString());
+            Log.d(TAG, exception.toString());
         }
     }
 

@@ -17,7 +17,6 @@ public class MyAlarm {
     public MyAlarm(){}
 
     public MyAlarm(String mTitle,String mTexts,String mRange,String latitude,String longitude,String mRepeat){
- //       id = mId;
         title= mTitle;
         texts= mTexts;
         range = mRange;
@@ -26,12 +25,6 @@ public class MyAlarm {
         mLongitude=longitude;
     }
 
- //   public void setId(int mId){
- //       id = mId;
- //   }
- //   public int getId(){
- //       return  id;
- //   }
 
     public void setTitle(String mTitle){title = mTitle;}
     public String getTitle(){return title;}

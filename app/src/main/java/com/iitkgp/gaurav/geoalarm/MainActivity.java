@@ -3,9 +3,12 @@ package com.iitkgp.gaurav.geoalarm;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.RecyclerView;
@@ -13,47 +16,54 @@ import android.support.v7.widget.RecyclerView;
 import java.util.ArrayList;
 
 
-public class MainActivity extends ActionBarActivity {             //ActionBarActivity used to implement Theme.AppCombat
+public class MainActivity extends AppCompatActivity {             //AppCompatActivity used to implement Theme.AppCombat
 
+    private String TAG = this.getClass().getSimpleName();
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    String data[] = {"Gaurav","Kumar","19"};
-    String dist[]={"500","600","100"};
-    private ArrayList<ListViewItem> dataList;
-    MySQLiteHelper mySQL;
+    AlarmDetail mAlarmDetail;
+//    String data[] = {"Gaurav","Kumar","19"};
+//    String dist[]={"500","600","100"};
+//    public AlarmDetail mAlarmDetail;
+    public static ArrayList<ListViewItem> dataList;
+
+    public static boolean SATELLITEVIEW=true;
+    public static boolean TRAFFICVIEW=false;
+    public static boolean SHOWALARMRANGE=true;
+    public static boolean NOTIFICATIONBAR=true;
+    public static boolean ALARMVIBRATOR=true;
+//    MySQLiteHelper mySQL;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
         dataList = new ArrayList<ListViewItem>();
-        populate(dataList);
-        mySQL = new MySQLiteHelper(this);
-        MyAlarm mMyAlarm = new MyAlarm("Office","Dont wake me up","500","MoTu");
-        mySQL.addAlarm(mMyAlarm);
-        // use this setting to improve performance if you know that changes
-        // in content do not change the layout size of the RecyclerView
-       // mRecyclerView.setHasFixedSize(true);
+        mAlarmDetail = new AlarmDetail(this,mAlarmListener);
+        inflateView();
+    }
 
-        // use a linear layout manager
+    public AlarmListener mAlarmListener = new AlarmListener() {
+        @Override
+        public void onAlarmCreated(ListViewItem mListViewItem) {
+        dataList.add(mListViewItem);
+            inflateView();
+        }
+    };
 
-
-        // specify an adapter (see also next example)
-        mAdapter = new UIAdapter(this,dataList);
-        mRecyclerView.setAdapter(mAdapter);
-
+    private void inflateView(){
+        if(dataList!=null) {
+            mAdapter = new UIAdapter(this, dataList);
+            mRecyclerView.setAdapter(mAdapter);
+        }
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
     }
 
-    private void populate(ArrayList<ListViewItem> dataList) {
-        for(int i =0 ;i<2;i++){
-            ListViewItem mItem = new ListViewItem(data[i],dist[i],R.drawable.ic_geoalarm_btn_on);
-            dataList.add(mItem);
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -75,12 +85,14 @@ public class MainActivity extends ActionBarActivity {             //ActionBarAct
             startActivity(intent);
             return true;
         }
-        else if (id==R.id.action_new_alarm){
-            Intent intent = new Intent(MainActivity.this,AlarmDetail.class);
+        else if (id==R.id.new_alarm){
+            Intent intent = new Intent(MainActivity.this,MapActivity.class);
             startActivity(intent);
             return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
 }

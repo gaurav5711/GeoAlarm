@@ -6,7 +6,7 @@
         android:title="@string/action_settings"
         android:orderInCategory="100"
         app:showAsAction="never" />
-    <item android:id="@+id/action_new_alarm"
+    <item android:id="@+id/new_alarm"
         android:title="@string/NewAlarm"
         android:orderInCategory="100" />
 </menu>

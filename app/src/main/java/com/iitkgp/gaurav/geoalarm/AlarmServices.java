@@ -8,6 +8,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Vibrator;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -25,6 +26,9 @@ public class AlarmServices extends Service implements LocationListener {
     private LocationManager mLocationManager;
     private int[] ranges;
     private int counter = 0;
+    private Vibrator mVibrator;
+
+    public static long vibrationDuration = 10000;
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -37,6 +41,7 @@ public class AlarmServices extends Service implements LocationListener {
         mySQL = new MySQLiteHelper(this);
         mListAlarm = mySQL.getAllDetails();
         //      alarmThread.start();
+        mVibrator = (Vibrator)this.getSystemService(Context.VIBRATOR_SERVICE);
         ranges = new int[mySQL.getCount()];
         mLocationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
 
@@ -52,12 +57,6 @@ public class AlarmServices extends Service implements LocationListener {
         }
     }
 
-    //    Thread alarmThread = new Thread(){
-//        @Override
-//        public void run() {
-//         mAlarmActivity = new AlarmActivity(mListAlarm);
-//        }
-//    };
 
     @Override
     public void onLocationChanged(Location location) {
@@ -72,8 +71,7 @@ public class AlarmServices extends Service implements LocationListener {
             near_locations.setLongitude(location.getLongitude());
             double distance = selected_location.distanceTo(near_locations);
             if(distance<=Double.parseDouble(mAlarm.getRange())){
-                //Vibrate
-                //showNotification
+                mVibrator.vibrate(vibrationDuration);
             }
         }
     }
@@ -92,5 +90,9 @@ public class AlarmServices extends Service implements LocationListener {
     @Override
     public void onProviderDisabled(String provider) {
         Toast.makeText(getApplicationContext(),"GPS must be enabled",Toast.LENGTH_LONG).show();
+    }
+
+    public  static void setVibrationDuration(long time){
+        vibrationDuration=time;
     }
 }
