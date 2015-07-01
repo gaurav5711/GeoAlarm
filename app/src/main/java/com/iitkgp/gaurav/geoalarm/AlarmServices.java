@@ -20,7 +20,7 @@ import java.util.List;
  */
 public class AlarmServices extends Service implements LocationListener {
 
-    private MySQLiteHelper mySQL;
+    private MySQLite mySQL;
     private List<MyAlarm> mListAlarm;
     private AlarmActivity mAlarmActivity;
     private LocationManager mLocationManager;
@@ -38,7 +38,7 @@ public class AlarmServices extends Service implements LocationListener {
     public void onStart(Intent intent, int startId) {
         super.onStart(intent, startId);
         mListAlarm = new LinkedList<MyAlarm>();
-        mySQL = new MySQLiteHelper(this);
+        mySQL = new MySQLite(this);
         mListAlarm = mySQL.getAllDetails();
         //      alarmThread.start();
         mVibrator = (Vibrator)this.getSystemService(Context.VIBRATOR_SERVICE);
@@ -72,6 +72,12 @@ public class AlarmServices extends Service implements LocationListener {
             double distance = selected_location.distanceTo(near_locations);
             if(distance<=Double.parseDouble(mAlarm.getRange())){
                 mVibrator.vibrate(vibrationDuration);
+            //    update();
+                if((mAlarm.getRepeat()==null)||(mAlarm.equals(""))) {
+                    mySQL.deleteId(i);
+                }else{
+                    mySQL.addAlarm(mAlarm);
+                }
             }
         }
     }

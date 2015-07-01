@@ -12,21 +12,27 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 
-public class MainActivity extends AppCompatActivity {             //AppCompatActivity used to implement Theme.AppCombat
+public class MainActivity extends AppCompatActivity implements AlarmListener {             //AppCompatActivity used to implement Theme.AppCombat
 
     private String TAG = this.getClass().getSimpleName();
     private RecyclerView mRecyclerView;
     private RecyclerView.Adapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    AlarmDetail mAlarmDetail;
+//    AlarmDetail mAlarmDetail;
 //    String data[] = {"Gaurav","Kumar","19"};
 //    String dist[]={"500","600","100"};
-//    public AlarmDetail mAlarmDetail;
+    public AlarmDetail mAlarmDetail;
+    public AlarmListener mAlarmListener;
     public static ArrayList<ListViewItem> dataList;
+    MySQLite mMySQLite;
+//    public DeleteListener mDeleteListener;
 
     public static boolean SATELLITEVIEW=true;
     public static boolean TRAFFICVIEW=false;
@@ -40,24 +46,51 @@ public class MainActivity extends AppCompatActivity {             //AppCompatAct
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        dataList = new ArrayList<ListViewItem>();
+        Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        if(bundle==null){
+            Log.e(TAG,"Intent is null");
+        }
+//        else {
+//            ListViewItem item = new ListViewItem(bundle.getString("maptitle"),bundle.getString("maprange"),bundle.getInt("mapid"));
+//            dataList.add(item);
+//        }
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
         mRecyclerView = (RecyclerView) findViewById(R.id.my_recycler_view);
-        dataList = new ArrayList<ListViewItem>();
-        mAlarmDetail = new AlarmDetail(this,mAlarmListener);
+        populateList();
         inflateView();
     }
 
-    public AlarmListener mAlarmListener = new AlarmListener() {
+    private void populateList() {
+        mMySQLite = new MySQLite(this);
+        List<MyAlarm> alarmList= new LinkedList<MyAlarm>();
+        alarmList = mMySQLite.getAllDetails();
+        int n = mMySQLite.getCount();
+        for(int i=(n-1);i>=0;i--){
+            MyAlarm alarm = alarmList.get(i);
+            dataList.add(new ListViewItem(alarm.getTitle(),alarm.getRange(),R.drawable.ic_alarm_btn_off));
+        }
+    }
+
+//    public AlarmListener mAlarmListener = new AlarmListener() {
+//        @Override
+//        public void onAlarmCreated(ListViewItem mListViewItem) {
+//        dataList.add(mListViewItem);
+//            inflateView();
+//        }
+//    };
+
+    public DeleteListener mDeviceListener = new DeleteListener() {
         @Override
-        public void onAlarmCreated(ListViewItem mListViewItem) {
-        dataList.add(mListViewItem);
-            inflateView();
+        public void onDeleted(int pos,String title) {
+            Toast.makeText(MainActivity.this,"deleted",Toast.LENGTH_LONG).show();
         }
     };
 
     private void inflateView(){
         if(dataList!=null) {
-            mAdapter = new UIAdapter(this, dataList);
+            mAdapter = new UIAdapter(this, dataList,mDeviceListener);
             mRecyclerView.setAdapter(mAdapter);
         }
         mLayoutManager = new LinearLayoutManager(this);
@@ -95,4 +128,8 @@ public class MainActivity extends AppCompatActivity {             //AppCompatAct
     }
 
 
+    @Override
+    public void onAlarmCreated(ListViewItem mListViewItem) {
+     Log.e(TAG,mListViewItem.distance);
+    }
 }

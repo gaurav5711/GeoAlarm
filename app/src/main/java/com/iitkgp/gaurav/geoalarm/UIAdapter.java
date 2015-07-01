@@ -19,18 +19,17 @@ public class UIAdapter extends RecyclerView.Adapter<UIAdapter.MyViewHolder> {
     private String TAG = this.getClass().getSimpleName();
     private ArrayList<ListViewItem> mDataset;
     private LayoutInflater mInflator;
+    private DeleteListener mDelete;
 
-    public UIAdapter(Context context,ArrayList<ListViewItem> data){
+    public UIAdapter(Context context,ArrayList<ListViewItem> data,DeleteListener listener){
         mDataset = data;
 //        Log.d(TAG," "+mDataset[0]+" "+mDataset[1]+" "+mDataset[2]);
         mInflator = LayoutInflater.from(context);
+        mDelete=listener;
     }
 
-    // Provide a reference to the views for each data item
-    // Complex data items may need more than one view per item, and
-    // you provide access to all the views for a data item in a view holder
-    public static class MyViewHolder extends RecyclerView.ViewHolder {
-        // each data item is just a string in this case
+    public class MyViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+
         private TextView txtTitle,txtDistance;
         private ImageButton mImageButton;
         public MyViewHolder(View v) {
@@ -38,16 +37,28 @@ public class UIAdapter extends RecyclerView.Adapter<UIAdapter.MyViewHolder> {
             txtTitle = (TextView)v.findViewById(R.id.txtTitle);
             txtDistance =(TextView)v.findViewById(R.id.txtDistance);
             mImageButton = (ImageButton)v.findViewById(R.id.imgBtnOn);
+            mImageButton.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            delete (getPosition());
+        }
+    }
+
+    public void delete(int position){
+        mDelete.onDeleted(position, mDataset.get(position).alarmTitle);
+        mDataset.remove(position);
+        notifyItemRemoved(position);
     }
 
     @Override
     public UIAdapter.MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        // create a new view
+
         Log.d(TAG,"createViewHolderCalled");
         View v = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.listview, parent, false);
-        // set the view's size, margins, paddings and layout parameters
+
         MyViewHolder vh = new MyViewHolder(v);
         return vh;
     }
@@ -55,9 +66,9 @@ public class UIAdapter extends RecyclerView.Adapter<UIAdapter.MyViewHolder> {
     @Override
     public void onBindViewHolder(UIAdapter.MyViewHolder holder, int position) {
         Log.d(TAG,"bindViewHolderCalled");
-     holder.txtTitle.setText(mDataset.get(position).alarmTitle);
-     holder.txtDistance.setText(mDataset.get(position).distance);
-     holder.mImageButton.setImageResource(mDataset.get(position).iconId);
+        holder.txtTitle.setText(mDataset.get(position).alarmTitle);
+        holder.txtDistance.setText(mDataset.get(position).distance);
+        holder.mImageButton.setImageResource(mDataset.get(position).iconId);
     }
 
     @Override

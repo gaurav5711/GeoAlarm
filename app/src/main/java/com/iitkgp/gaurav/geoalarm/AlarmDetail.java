@@ -22,14 +22,12 @@ public class AlarmDetail extends AppCompatActivity {
     private String mlatitude,mlongitude;
     private AlarmListener mAlarmListener;
 
-    public AlarmDetail(Context context,AlarmListener listeners){
+    public AlarmDetail(Context context,AlarmListener mListener){
         super();
-        mAlarmListener=listeners;
+        mAlarmListener=mListener;
+        Log.e(TAG,"Context Constructor Called");
     }
-
-   public AlarmDetail(){
-   super();
-    }
+    public AlarmDetail(){Log.e(TAG,"Default Constructor Called");};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +39,13 @@ public class AlarmDetail extends AppCompatActivity {
         Bundle bundle =intent.getExtras();
         mlatitude=String.valueOf(bundle.getDouble("latitude"));
         mlongitude=String.valueOf(bundle.getDouble("longitude"));
+        mAlarmListener = new AlarmListener() {
+            @Override
+            public void onAlarmCreated(ListViewItem mListViewItem) {
+            //onAlarmCreated(mListViewItem);
+            Log.e(TAG,mListViewItem.distance);
+            }
+        };
     }
 
     private void initialize() {
@@ -90,23 +95,28 @@ public class AlarmDetail extends AppCompatActivity {
                 if(!repeat.contains("Sun")) repeat = repeat+"Sun";
                 break;
             case R.id.btnOK:
-                MySQLiteHelper mySQL = new MySQLiteHelper(this);
-                MyAlarm mMyAlarm = new MyAlarm(edtTitle.getText().toString(),edtTexts.getText().toString(),mlatitude,
-                                               mlongitude,edtRange.getText().toString(),repeat);                 //add data to database.....
+                MySQLite mySQL = new MySQLite(this);
+                MyAlarm mMyAlarm = new MyAlarm(edtTitle.getText().toString(),edtTexts.getText().toString(),edtRange.getText().toString(),
+                                               mlatitude, mlongitude,repeat);                 //add data to database.....
                 mySQL.addAlarm(mMyAlarm);
                 MainActivity.dataList.add(new ListViewItem(edtTitle.getText().toString(), edtRange.getText().toString(), R.drawable.ic_alarm_btn_on));
-                Intent intent = new Intent(AlarmDetail.this,AlarmServices.class);
-                stopService(intent);                          //used to update sql value to update alarm
-                startService(intent);
+                Intent serviceintent = new Intent(AlarmDetail.this,AlarmServices.class);
+                stopService(serviceintent);                          //used to update sql value to update alarm
+                startService(serviceintent);
                 if(mAlarmListener!=null) {
                     mAlarmListener.onAlarmCreated(new ListViewItem(edtTitle.getText().toString(), edtRange.getText().toString(), R.drawable.ic_alarm_btn_on));
+                    Bundle bundle = new Bundle();
+                    bundle.putString("maptitle",edtTitle.getText().toString());
+                    bundle.putString("maprange", edtRange.getText().toString());
+                    bundle.putInt("mapid", R.drawable.ic_alarm_btn_on);
+                    Intent intent = new Intent(AlarmDetail.this,MainActivity.class);
+                    intent.putExtras(bundle);
+                    startActivity(intent);
                 }
-                startActivity(new Intent(AlarmDetail.this,MainActivity.class));
-                    break;
+                else{
+                    Log.e(TAG,"AlarmListener NULL");
+                }
+                break;
         }
     }
-
-
-
-
 }

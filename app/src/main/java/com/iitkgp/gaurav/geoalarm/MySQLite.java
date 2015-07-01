@@ -1,5 +1,4 @@
 package com.iitkgp.gaurav.geoalarm;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -11,54 +10,68 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * Created by gaurav on 6/26/2015.
+ * Created by gaurav on 6/30/2015.
  */
 
-public class MySQLiteHelper extends SQLiteOpenHelper
-{
+public class MySQLite extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
-    private static final String DATABASE_NAME = "AlarmList";
-    public MySQLiteHelper(Context context)
-    {
+    private static final String DATABASE_NAME = "Alarms";
+
+    public MySQLite(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
-    public void onCreate(SQLiteDatabase db)
-    {
-        String CREATE_ALARM_TABLE = "CREATE TABLE alarm ( "+"id INTEGER PRIMARY KEY AUTOINCREMENT, "+"title TEXT, "+"texts TEXT,"+"range TEXT,"+"latitude TEXT, "+"longitude TEXT"+"repeat TEXT )";
-        db.execSQL(CREATE_ALARM_TABLE);                                        //repeat--stores first two letter of selected days else 0
+
+    public void onCreate(SQLiteDatabase db) {
+        String CREATE_PATIENT_TABLE = "CREATE TABLE alarmlist ( " + "id INTEGER PRIMARY KEY AUTOINCREMENT, " + "title TEXT, " + "summary TEXT," + "range TEXT," + "repeat TEXT," + "latitude TEXT," + "longitude TEXT )";
+        db.execSQL(CREATE_PATIENT_TABLE);
     }
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
-    {
-        db.execSQL("DROP TABLE IF EXISTS alarm");
+
+    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS alarmlist");
         this.onCreate(db);
     }
-    private static final String TABLE_ALARM = "alarm";
+
+    private static final String TABLE_ALARM = "alarmlist";
     private static final String ID = "_id";
     private static final String TITLE = "title";
-    private static final String TEXTS = "texts";
+    private static final String SUMMARY = "summary";
     private static final String RANGE = "range";
     private static final String REPEAT = "repeat";
-    private static final String LATITUDE="latitude";
-    private static final String LONGITUDE="longitude";
+    private static final String LATITUDE = "latitude";
+    private static final String LONGITUDE = "longitude";
 
-    private static final String[] COLUMNS = {ID,TITLE,TEXTS,RANGE,LATITUDE,LONGITUDE,REPEAT};
-    public void addAlarm(MyAlarm mMyAlarm)
-    {
+
+    private static final String[] COLUMNS = {ID, TITLE, SUMMARY, RANGE, REPEAT, LATITUDE, LONGITUDE};
+
+    public void addAlarm(MyAlarm mMyAlarm) {
         SQLiteDatabase db = this.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(TITLE, mMyAlarm.getTitle());
-        values.put(TEXTS, mMyAlarm.getTexts());
+        values.put(SUMMARY, mMyAlarm.getTexts());
         values.put(RANGE, mMyAlarm.getRange());
-        values.put(LATITUDE,mMyAlarm.getLatitude());
-        values.put(LONGITUDE,mMyAlarm.getLongitude());
         values.put(REPEAT, mMyAlarm.getRepeat());
+        values.put(LATITUDE, mMyAlarm.getLatitude());
+        values.put(LONGITUDE, mMyAlarm.getLongitude());
         db.insertOrThrow(TABLE_ALARM, null, values);
         db.close();
     }
+
+    public boolean deleteTitle(String title)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_ALARM, TITLE + "=" + title, null) > 0;
+    }
+
+    public boolean deleteId(int id)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+        return db.delete(TABLE_ALARM, ID + "=" + id, null) > 0;
+    }
+
     public String getRange(String title)                                  // overriding this function
     {
         SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor=db.query("alarm", null, "TITLE=?", new String[]{title}, null, null, null);
+        Cursor cursor=db.query(TABLE_ALARM, null, "TITLE=?", new String[]{title}, null, null, null);
         if(cursor.getCount()<1) // Invalid Title
         {
             cursor.close();
@@ -84,7 +97,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper
                 mMyAlarm = new MyAlarm();
                 //mMyAlarm.setId(Integer.parseInt(cursor.getString(cursor.getColumnIndex(ID))));
                 mMyAlarm.setTitle(cursor.getString(cursor.getColumnIndex(TITLE)));
-                mMyAlarm.setTexts(cursor.getString(cursor.getColumnIndex(TEXTS)));
+                mMyAlarm.setTexts(cursor.getString(cursor.getColumnIndex(SUMMARY)));
                 mMyAlarm.setRange(cursor.getString(cursor.getColumnIndex(RANGE)));
                 mMyAlarm.setRepeat(cursor.getString(cursor.getColumnIndex(REPEAT)));
                 mMyAlarm.setLatitude(cursor.getString(cursor.getColumnIndex(LATITUDE)));
@@ -92,6 +105,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper
                 listAlarm.add(mMyAlarm);
             }while (cursor.moveToNext());
         }
+        cursor.close();
         return listAlarm;
     }
 
@@ -107,6 +121,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper
                 count++;
             }while (cursor.moveToNext());
         }
+        cursor.close();
         return count;
     }
 
@@ -121,7 +136,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper
             do {
                 if (id == count) {
                     alarm.setTitle(cursor.getString(cursor.getColumnIndex(TITLE)));
-                    alarm.setTexts(cursor.getString(cursor.getColumnIndex(TEXTS)));
+                    alarm.setTexts(cursor.getString(cursor.getColumnIndex(SUMMARY)));
                     alarm.setRange(cursor.getString(cursor.getColumnIndex(RANGE)));
                     alarm.setRepeat(cursor.getString(cursor.getColumnIndex(REPEAT)));
                     alarm.setLatitude(cursor.getString(cursor.getColumnIndex(LATITUDE)));
@@ -130,6 +145,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper
                 count++;
             }while (cursor.moveToNext());
         }
+        cursor.close();
         return alarm;
     }
 
