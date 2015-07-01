@@ -1,0 +1,3 @@
+This is location-based alarm.User can select required destination from google map displayed in activity and set range within which 
+alarm will go on.Application constantly gets user location and do required things using simple calculation of distance between 
+selected and present location.
